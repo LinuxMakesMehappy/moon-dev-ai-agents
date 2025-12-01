@@ -1,3 +1,26 @@
+# Secrets and environment
+.env
+.env.*
+.envrc
+.cursor/
+.vscode/
+
+# Data artifacts
+src/data/session_eval/*.csv
+src/data/warehouse/*.duckdb
+src/data/**/*.parquet
+src/data/**/*.feather
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Notebooks and outputs
+.ipynb_checkpoints/
+
 # 🌙 Moon Dev's .gitignore
 # Keep your secrets safe! 🔒
 
