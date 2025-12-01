@@ -17,11 +17,31 @@ def load_csv(symbol: str, timeframe: str) -> pd.DataFrame:
     p = Path("src/data/session_eval") / f"{symbol}-{timeframe}.csv"
     if not p.exists():
         raise FileNotFoundError(f"Missing data file: {p}")
-    df = pd.read_csv(p, parse_dates=['time'], index_col='time')
+    # Be lenient with the datetime column name (some generators store as 'index' or unnamed first col)
+    df = pd.read_csv(p)
+    dt_col = None
+    if 'time' in df.columns:
+        dt_col = 'time'
+    else:
+        first = df.columns[0]
+        dt_col = first
+    df[dt_col] = pd.to_datetime(df[dt_col], errors='coerce')
+    if df[dt_col].isna().all():
+        raise ValueError("Unable to parse datetime column in CSV")
+    df = df.set_index(dt_col)
     if df.index.tz is None:
         df = df.tz_localize('UTC')
     else:
         df = df.tz_convert('UTC')
+    # Normalize column names
+    cols_map = {c: c.lower() for c in df.columns}
+    df = df.rename(columns=cols_map)
+    # Accept common variants
+    alt = {
+        "Open": "open", "High": "high", "Low": "low", "Close": "close", "Volume": "volume",
+        "BidOpen": "open", "BidHigh": "high", "BidLow": "low", "BidClose": "close", "TickVolume": "volume",
+    }
+    df = df.rename(columns=alt)
     df = df[['open', 'high', 'low', 'close', 'volume']].sort_index()
     return df
 
