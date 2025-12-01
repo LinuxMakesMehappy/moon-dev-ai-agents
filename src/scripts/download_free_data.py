@@ -44,8 +44,8 @@ def save_csv(df: pd.DataFrame, out_symbol: str, timeframe: str):
 def main():
     ap = argparse.ArgumentParser(description="Download free 5m data via yfinance for BTC/FX/XAU")
     ap.add_argument("--symbols", default="BTC-USD,EURUSD,GBPUSD,USDJPY,XAUUSD")
-    ap.add_argument("--timeframe", default="5m")
-    ap.add_argument("--period", default="60d", help="yfinance period (max 60d for 5m)")
+    ap.add_argument("--timeframe", default="5m", help="yfinance intervals: 1m(7d max),2m,5m,15m,30m,60m,1h,...")
+    ap.add_argument("--period", default="60d", help="yfinance period (e.g., 7d for 1m; 60d for 5m)")
     args = ap.parse_args()
 
     tf = args.timeframe
